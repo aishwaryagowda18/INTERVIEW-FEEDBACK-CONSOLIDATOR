@@ -61,7 +61,6 @@ This system helps recruiters and hiring managers make faster, data-driven, and m
 * React.js
 * Vite
 * JavaScript
-* Tailwind CSS
 * HTML5
 * CSS3
 
@@ -69,7 +68,6 @@ This system helps recruiters and hiring managers make faster, data-driven, and m
 
 * Python
 * FastAPI
-* REST APIs
 * Uvicorn Server
 
 ### AI Integration
@@ -83,7 +81,6 @@ This system helps recruiters and hiring managers make faster, data-driven, and m
 * VS Code
 * Git
 * GitHub
-* Postman
 
 ---
 
