@@ -1,6 +1,6 @@
 import "./HomePage.css";
 
-export default function HomePage({ onStart }) {
+export default function HomePage({ onStart, onHistory }) {
 
 return(
 
@@ -23,7 +23,20 @@ HireInsight
 </div>
 
 
+<div className="navActions">
+
 <button
+type="button"
+className="historyBtn"
+onClick={onHistory}
+>
+
+Assessment History
+
+</button>
+
+<button
+type="button"
 className="startBtn"
 onClick={onStart}
 >
@@ -31,6 +44,8 @@ onClick={onStart}
 Interview Feedback Consolidator
 
 </button>
+
+</div>
 
 </nav>
 

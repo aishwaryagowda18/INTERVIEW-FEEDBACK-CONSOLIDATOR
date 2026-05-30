@@ -57,6 +57,15 @@ font-weight:bold;
 }
 
 
+.navActions{
+
+display:flex;
+align-items:center;
+gap:12px;
+flex-wrap:wrap;
+
+}
+
 .startBtn{
 
 background:#1e2430;
@@ -70,6 +79,36 @@ border-radius:30px;
 color:white;
 
 cursor:pointer;
+
+font-size:15px;
+
+}
+
+.historyBtn{
+
+background:transparent;
+
+border:1px solid #f97316;
+
+padding:12px 25px;
+
+border-radius:30px;
+
+color:#f97316;
+
+cursor:pointer;
+
+font-size:15px;
+
+font-weight:600;
+
+transition:background .2s ease;
+
+}
+
+.historyBtn:hover{
+
+background:rgba(249,115,22,.12);
 
 }
 

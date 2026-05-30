@@ -1,3 +1,6 @@
+import { useEffect } from 'react'
+import { saveReportToHistoryApi } from '../modules/history/utils/saveReportToHistoryApi'
+
 function verdictClass(v = '') {
   const lv = v.toLowerCase()
 
@@ -135,6 +138,23 @@ const circumference =
   verdictClass(
     finalRecommendation
   )
+
+  useEffect(() => {
+    if (!result || !candidate?.name?.trim()) return
+
+    saveReportToHistoryApi({
+      candidate,
+      interviewers,
+      result,
+      score,
+      finalRecommendation,
+    }).catch((err) => {
+      console.warn(
+        '[HireInsight History] Save failed:',
+        err?.message || err
+      )
+    })
+  }, [result, candidate, interviewers, score, finalRecommendation])
 
   return (
 
