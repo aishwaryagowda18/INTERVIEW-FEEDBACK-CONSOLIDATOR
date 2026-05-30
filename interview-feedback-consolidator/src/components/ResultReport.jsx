@@ -37,21 +37,83 @@ export default function ResultReport({
   onReset
 }) {
 
-  const r = result
 
-  const score =
-    Math.min(
-      10,
-      Math.max(
-        1,
-        Math.round(
-          r.hiringScore || 5
-        )
-      )
-    )
 
-  const circumference =
-    2 * Math.PI * 30
+  const r = result || {}
+
+/* ==========================
+   FORCE REAL SCORE
+========================== */
+
+const score =
+interviewers.length > 0
+
+? Math.round(
+
+interviewers.reduce(
+(sum, iv) =>
+sum + Number(iv.rating || 0),
+0
+)
+
+/
+
+interviewers.length
+
+)
+
+: 0
+
+
+/* ==========================
+   FORCE RECOMMENDATION
+========================== */
+
+const recommendationList =
+interviewers.map(
+iv => iv.recommendation
+  )
+  
+
+const finalRecommendation =
+
+recommendationList.includes(
+'Strong No Hire'
+)
+
+? 'Strong No Hire'
+
+: recommendationList.includes(
+'No Hire'
+)
+
+? 'No Hire'
+
+: recommendationList.includes(
+'Hire with Reservations'
+)
+
+? 'Hire with Reservations'
+
+: recommendationList.filter(
+rec => rec === 'Strong Hire'
+).length >= 2
+
+? 'Strong Hire'
+
+: recommendationList.includes(
+'Hire'
+)
+
+? 'Hire'
+
+: 'Hold / Defer';
+
+
+const circumference =
+  2 * Math.PI * 30
+
+
 
   const dashOffset =
     circumference -
@@ -70,9 +132,9 @@ export default function ResultReport({
     )
 
   const vcls =
-    verdictClass(
-      r.finalRecommendation
-    )
+  verdictClass(
+    finalRecommendation
+  )
 
   return (
 
@@ -167,8 +229,8 @@ strokeDashoffset={dashOffset}
 
 <div className={`verdict-chip ${vcls}`}>
 
-{r.finalRecommendation
-|| 'Review Needed'}
+{finalRecommendation}
+
 
 </div>
 

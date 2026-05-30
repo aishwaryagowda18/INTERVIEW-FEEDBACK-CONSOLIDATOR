@@ -8,17 +8,11 @@ app = FastAPI()
 
 
 app.add_middleware(
-
     CORSMiddleware,
-
     allow_origins=["*"],
-
     allow_credentials=True,
-
     allow_methods=["*"],
-
-    allow_headers=["*"]
-
+    allow_headers=["*"],
 )
 
 
@@ -29,17 +23,12 @@ class Input(BaseModel):
 @app.get("/")
 def home():
 
-    return {
-        "message":
-        "Backend Running"
-    }
+    return {"message": "Backend Running"}
 
 
 @app.post("/analyze")
 def run(data: Input):
 
-    result = analyze(
-        data.prompt
-    )
+    result = analyze(data.prompt)
 
     return result

@@ -67,15 +67,10 @@ AI powered hiring recommendations.
 
 
 <button
-
-className="heroButton"
-
-onClick={onStart}
-
+  className="start-btn"
+  onClick={onStart}
 >
-
-Start Assessment →
-
+  Generate Hiring Insights →
 </button>
 
 </section>

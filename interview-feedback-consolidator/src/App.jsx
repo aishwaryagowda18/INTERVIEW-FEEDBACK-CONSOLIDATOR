@@ -341,33 +341,17 @@ step===4 &&
 
 <ResultReport
 
-result={
-selectedReport?.result
-||
-result
-}
+result={result}
 
-candidate={
-selectedReport?.candidate
-||
-candidate
-}
+candidate={candidate}
 
-interviewers={
-selectedReport?.interviewers
-||
-interviewers
-}
+interviewers={interviewers}
 
-
-
-onEdit={()=>
+onEdit={() =>
 setStep(2)
 }
 
-
-
-onReset={()=>{
+onReset={() => {
 
 localStorage.removeItem(
 "selectedReport"
@@ -388,122 +372,6 @@ setShowHome(true)
 )
 
 }
-
-
-
-
-
-{
-
-history.length>0 && (
-
-<div
-style={{
-marginTop:"50px"
-}}
->
-
-<h2>
-
-Previous Assessments
-
-</h2>
-
-
-{
-
-history.map(item=>(
-
-<div
-
-key={item.id}
-
-style={{
-
-padding:"15px",
-
-border:
-"1px solid #ddd",
-
-marginBottom:
-"10px",
-
-borderRadius:
-"10px"
-
-}}
-
->
-
-<h3>
-
-{
-item.candidate?.name
-}
-
-</h3>
-
-
-<p>
-
-{
-item.date
-}
-
-</p>
-
-
-<p>
-
-Recommendation:
-
-{
-item.result
-?.finalRecommendation
-}
-
-</p>
-
-
-
-<button
-
-onClick={()=>{
-
-localStorage.setItem(
-
-"selectedReport",
-
-JSON.stringify(item)
-
-)
-
-setSelectedReport(item)
-
-setStep(4)
-
-}}
-
->
-
-Open Report
-
-</button>
-
-</div>
-
-))
-
-}
-
-</div>
-
-)
-
-}
-
-
-
 </div>
 
 </>

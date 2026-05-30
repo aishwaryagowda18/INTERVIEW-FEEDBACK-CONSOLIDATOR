@@ -1,10 +1,105 @@
 export async function consolidateFeedback(
-candidate,
-interviewers
+  candidate,
+  interviewers
 ) {
 
-const feedbackText =
-interviewers.map((iv,i)=>`
+  /* ==========================
+     CALCULATE REAL SCORE
+  ========================== */
+
+  const ratings =
+    interviewers.map(
+      iv => Number(iv.rating || 0)
+    )
+
+  const averageRating =
+    ratings.reduce(
+      (a,b)=>a+b,
+      0
+    ) / ratings.length
+
+  const hiringScore =
+    Math.round(averageRating)
+
+
+  /* ==========================
+     CALCULATE RECOMMENDATION
+  ========================== */
+
+  const recommendations =
+    interviewers.map(
+      iv => iv.recommendation
+    )
+
+  let finalRecommendation =
+    "Hold"
+
+  if (
+    recommendations.includes(
+      "Strong No Hire"
+    )
+  ) {
+
+    finalRecommendation =
+      "Strong No Hire"
+
+  }
+
+  else if (
+
+    recommendations.includes(
+      "No Hire"
+    )
+
+  ) {
+
+    finalRecommendation =
+      "No Hire"
+  }
+
+  else if (
+
+    recommendations.includes(
+      "Hire with Reservations"
+    )
+
+  ) {
+
+    finalRecommendation =
+      "Hire with Reservations"
+  }
+
+  else if (
+
+    recommendations.filter(
+      r => r === "Strong Hire"
+    ).length >= 2
+
+  ) {
+
+    finalRecommendation =
+      "Strong Hire"
+  }
+
+  else if (
+
+    recommendations.includes(
+      "Hire"
+    )
+
+  ) {
+
+    finalRecommendation =
+      "Hire"
+  }
+
+
+  /* ==========================
+     BUILD FEEDBACK TEXT
+  ========================== */
+
+  const feedbackText =
+  interviewers.map((iv,i)=>`
 
 Interviewer ${i+1}:
 ${iv.name || 'Unnamed'}
@@ -44,7 +139,7 @@ ${iv.recommendation ||
 `).join('\n---\n')
 
 
-const prompt = `
+  const prompt = `
 
 You are a senior HR analyst.
 
@@ -64,20 +159,28 @@ Department:
 
 ${candidate.department}
 
-
 INTERVIEWER FEEDBACK:
 
 ${feedbackText}
 
+IMPORTANT:
+Use the exact recommendation and score below.
+
+Hiring Score:
+${hiringScore}/10
+
+Final Recommendation:
+${finalRecommendation}
 
 Return ONLY valid JSON:
 
 {
 
-"hiringScore":<1-10>,
+"hiringScore":
+${hiringScore},
 
 "finalRecommendation":
-"<Strong Hire|Hire|Hold|No Hire>",
+"${finalRecommendation}",
 
 "recommendationRationale":"",
 
@@ -100,8 +203,10 @@ Return ONLY valid JSON:
 ],
 
 "riskAreas":[
-{"area":"",
-"description":""}
+{
+"area":"",
+"description":""
+}
 ],
 
 "nextRoundFocus":[
@@ -116,125 +221,129 @@ Return ONLY valid JSON:
 `
 
 
-/* ---------- Backend Call ---------- */
+  /* ==========================
+     BACKEND CALL
+  ========================== */
 
-const response =
-await fetch(
+  const response =
+  await fetch(
 
-"http://127.0.0.1:8000/analyze",
+    "http://127.0.0.1:8000/analyze",
 
-{
+    {
+      method:"POST",
 
-method:"POST",
+      headers:{
+        "Content-Type":
+        "application/json"
+      },
 
-headers:{
-"Content-Type":
-"application/json"
-},
-
-body:JSON.stringify({
-prompt
-})
-
-}
-
-)
-
-
-if(!response.ok){
-
-const err =
-await response.json()
-.catch(()=>({}))
-
-throw new Error(
-
-err?.detail ||
-
-"Backend Error"
-
-)
-
-}
+      body:JSON.stringify({
+        prompt
+      })
+    }
+  )
 
 
-const data =
-await response.json()
+  if(!response.ok){
+
+    const err =
+    await response.json()
+    .catch(()=>({}))
+
+    throw new Error(
+
+      err?.detail ||
+
+      "Backend Error"
+
+    )
+  }
 
 
-const raw =
-
-data?.choices?.[0]
-?.message?.content || ""
+  const data =
+  await response.json()
 
 
-/* ---------- JSON Parse ---------- */
+  const raw =
 
-const clean =
-raw
-.replace(/```json/g,"")
-.replace(/```/g,"")
-.trim()
+  data?.choices?.[0]
+  ?.message?.content || ""
 
 
-try{
+  /* ==========================
+     JSON Parse
+  ========================== */
 
-const parsed =
-JSON.parse(clean)
-
-
-/* ---- Save History ---- */
-
-const history =
-
-JSON.parse(
-
-localStorage.getItem(
-"history"
-)
-
-)||[]
+  const clean =
+  raw
+  .replace(/```json/g,"")
+  .replace(/```/g,"")
+  .trim()
 
 
-history.unshift({
+  try{
 
-candidate,
-
-result:parsed,
-
-createdAt:
-new Date()
-.toLocaleString()
-
-})
+    const parsed =
+    JSON.parse(clean)
 
 
-localStorage.setItem(
+    /* FORCE CORRECT VALUES */
 
-"history",
+    parsed.hiringScore =
+      hiringScore
 
-JSON.stringify(
-history
-)
-
-)
+    parsed.finalRecommendation =
+      finalRecommendation
 
 
-return parsed
+    /* SAVE HISTORY */
 
-}
+    const history =
+
+    JSON.parse(
+
+      localStorage.getItem(
+        "history"
+      )
+
+    ) || []
 
 
-catch{
+    history.unshift({
 
-console.log(clean)
+      candidate,
 
-throw new Error(
+      result:parsed,
 
-"Failed to parse AI response"
+      createdAt:
+      new Date()
+      .toLocaleString()
 
-)
+    })
 
-}
 
+    localStorage.setItem(
+
+      "history",
+
+      JSON.stringify(
+        history
+      )
+    )
+
+
+    return parsed
+  }
+
+  catch{
+
+    console.log(clean)
+
+    throw new Error(
+
+      "Failed to parse AI response"
+
+    )
+  }
 }

@@ -23,36 +23,59 @@ export default function InterviewerForm({
 
   return (
     <>
-      <div className="progress-row">
-        <span className="progress-info">
-          <span className="progress-count">{filledCount}/{interviewers.length}</span> interviewers completed
-        </span>
-      </div>
+      {/* Interviewer List */}
 
-      {/* Tab bar */}
-      <div className="interviewer-tabs">
-        {interviewers.map((t, i) => {
-          const filled = isFilled(t)
-          let cls = 'itab'
-          if (filled) cls += ' filled'
-          if (i === activeIdx) cls += ' active'
-          return (
-            <div key={t.id} className={cls} onClick={() => setActiveIdx(i)}>
-              {t.name || `Interviewer ${i + 1}`}
-            </div>
-          )
-        })}
-        {interviewers.length < 4 && (
-          <button className="add-tab-btn" onClick={addInterviewer}>
-            + Add Interviewer
-          </button>
-        )}
-        {interviewers.length > 2 && (
-          <button className="remove-tab-btn" onClick={() => removeInterviewer(activeIdx)}>
-            Remove
-          </button>
-        )}
-      </div>
+<div className="interviewer-list">
+
+  <div className="interviewer-count">
+    {filledCount}/{interviewers.length}
+    <span> interviewers completed</span>
+        </div>
+
+      <div className="interviewer-row">
+
+  {interviewers.map((t, i) => (
+
+    <div
+      key={t.id}
+      className={`interviewer-item ${
+        i === activeIdx ? 'active' : ''
+      }`}
+      onClick={() => setActiveIdx(i)}
+    >
+      👤 {t.name || `Interviewer ${i + 1}`}
+    </div>
+
+  ))}
+
+</div>
+        
+
+  {interviewers.length < 4 && (
+
+    <button
+      className="add-interviewer-btn"
+      onClick={addInterviewer}
+    >
+      + Add Interviewer
+    </button>
+
+  )}
+
+  {interviewers.length > 2 && (
+
+    <button
+      className="remove-tab-btn"
+      onClick={() =>
+        removeInterviewer(activeIdx)
+      }
+    >
+      Remove
+    </button>
+
+  )}
+
+</div>
 
       {/* Form card */}
       <div className="card">
@@ -82,45 +105,36 @@ export default function InterviewerForm({
           </div>
           <div className="form-group">
             <label>Overall Rating (1–10)</label>
-            <div className="rating-row">
+          <div className="rating-row">
 
-{Array.from(
-{ length:10 },
-(_,i)=>i+1
-).map((n)=>(
+  {[1,2,3,4,5,6,7,8,9,10].map((num) => (
 
-<button
+    <button
+      key={num}
+      type="button"
 
-type="button"
+      className={`rating-btn ${
+        iv.rating === num
+        ? 'selected'
+        : ''
+      }`}
 
-key={n}
+      onClick={() =>
+        updateInterviewer(
+          activeIdx,
+          'rating',
+          num
+        )
+      }
+    >
+      {num}
+    </button>
 
-className={`rating-btn ${
-ratingClass(
-iv.rating,
-n
-)
-}`}
-
-onClick={()=>
-
-updateInterviewer(
-activeIdx,
-'rating',
-n
-)
-
-}
-
->
-
-{n}
-
-</button>
-
-))}
+  ))}
 
 </div>
+
+
           </div>
         </div>
 
